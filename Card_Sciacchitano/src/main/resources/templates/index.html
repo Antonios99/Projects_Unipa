@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+</head>
+<body>
+
+<nav class="navbar bg-primary" data-bs-theme="dark">
+    <ul class="navbar-nav ml-auto">
+
+
+        <li class="nav-item">
+            <a type="button"  class="btn btn-light text-dark rounded-lg mx-3 font-weight-bold" th:href="@{/login}">Login</a>
+        </li>
+
+    </ul>
+</nav>
+<div class="container">
+    <div class="row">
+
+            <div class="mx-auto">
+
+            <img src="logo.jpg" class="img-fluid"  alt="logo" style="width: 200px; height: auto;">
+
+            </div>
+
+    </div>
+</div>
+
+<div class="container">
+    <div class="jumbotron">
+    <div class="row">
+        <div class="col-9">
+            <input type="text" class="form-control" id="nCarta" placeholder="Inserisci il Numero della Carta" name="nCarta">
+        </div>
+        <div class=" col-3">
+            <button id="Verifica" class="btn btn-success ">Verifica Credito</button>
+        </div>
+    </div>
+        <div class="row mt-5">
+            <div class="col">
+                <h4 id="credito"></h4>
+            </div>
+            <div class="col">
+                <h4 class="" id="stato"></h4>
+            </div>
+
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- The Modal -->
+<div class="modal" id="warning">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Attenzione!</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                Il numero inserito non corrisponde ad una Carta
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button id="modalBut" type="button" class="btn btn-danger" data-dismiss="modal" >Chiudi</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $("#Verifica").click(function(){
+            $("#credito").text("");
+            $("#stato").text("");
+            if ($("#nCarta").val()==""){
+                $("#warning").show();
+            }
+
+            $.get("/getCarta/"+$("#nCarta").val(), function(data, status){
+                if (data==""){
+                    $("#warning").show();
+
+                }
+                else{
+                    $("#credito").text("Credito Residuo:  ");
+                    $("#credito").append(data.credito);
+                    $("#stato").append(data.stato);
+                    console.log(data.stato);
+                    $("#stato").removeClass("text-danger");
+                    $("#stato").removeClass("text-success");
+                    if(data.stato==="non attiva"){
+                        $("#stato").addClass("text-danger");
+                    }
+                    else if(data.stato==="attiva"){
+                        $("#stato").addClass("text-success");
+                    }
+
+
+                }
+
+            });
+
+        });
+        $("#modalBut").click(function(){
+            $("#warning").hide();
+        });
+    });
+</script>
+</body>
+</html>
